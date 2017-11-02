@@ -1,6 +1,6 @@
 # trek
 
-Opinionated database migrations for clojure
+Easy database migrations for clojure
 
 ## Usage
 
