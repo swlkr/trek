@@ -1,4 +1,4 @@
-(defproject trek "0.1.0"
+(defproject trek "0.1.1"
   :description ""
   :url "https://github.com/swlkr/trek"
   :license {:name "Eclipse Public License"

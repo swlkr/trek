@@ -94,8 +94,9 @@
     (str name " " type)))
 
 (defn create-table-contents [name args]
-  (let [table (-> (string/split name #"-")
-                  (second))
+  (let [table (->> (string/split name #"[-_]")
+                   (drop 1)
+                   (string/join "_"))
         sql (str "create table " table " (\n")
         columns (map column args)
         columns (-> columns
