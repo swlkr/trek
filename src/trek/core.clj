@@ -93,26 +93,38 @@
   (let [[name type] (string/split arg #":")]
     (str name " " type)))
 
+(defn parse-table-name [s]
+  (->> (string/split s #"[-_]")
+       (drop 1)
+       (string/join "_")))
+
 (defn create-table-contents [name args]
-  (let [table (->> (string/split name #"[-_]")
-                   (drop 1)
-                   (string/join "_"))
+  (let [table (parse-table-name name)
         sql (str "create table " table " (\n")
         columns (map column args)
         columns (-> columns
-                  (conj "id serial primary key")
+                  (conj "  id serial primary key")
                   vec
                   (conj "created_at timestamp without time zone default (now() at time zone 'utc')"))
-        column-string (string/join ",\n" columns)]
+        column-string (string/join ",\n  " columns)]
     (str sql column-string "\n)")))
 
-(defn drop-table-contents [name]
-  (str "drop table " (-> (string/split name #"-") (last))))
+(defn drop-table-contents [s]
+  (str "drop table " (parse-table-name s)))
 
-(defn contents [name args]
+(defn add-column? [s]
+  (= (count (->> (re-matches #"add-(\w+)-to-(\w+)" s)
+                 (drop 1)))
+     2))
+
+(defn remove-column? [s]
+  (= (count (->> (re-matches #"remove-(\w+)-from-(\w+)" s)))
+     2))
+
+(defn contents [s args]
   (cond
-    (string/starts-with? name "create-") (str "-- up\n" (create-table-contents name args) "\n\n"
-                                           "--down\n" (drop-table-contents name))
+    (string/starts-with? s "create-") (str "-- up\n" (create-table-contents s args) "\n\n"
+                                           "-- down\n" (drop-table-contents s))
     :else empty-migration))
 
 (defn create [name & args]

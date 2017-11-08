@@ -17,7 +17,7 @@
 
   (deftest contents-test
     (testing "create a migration that creates a table with columns"
-      (is (= "-- up\ncreate table users (\nid serial primary key,\nemail text,\npassword text,\ncreated_at timestamp without time zone default (now() at time zone 'utc')\n)\n\n--down\ndrop table users" (contents "create-users" ["email:text" "password:text"])))))
+      (is (= "-- up\ncreate table users (\n  id serial primary key,\n  email text,\n  password text,\n  created_at timestamp without time zone default (now() at time zone 'utc')\n)\n\n-- down\ndrop table users" (contents "create-users" ["email:text" "password:text"])))))
 
   (deftest pending-test
     (testing "pending migrations"
